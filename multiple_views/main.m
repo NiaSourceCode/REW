@@ -1,10 +1,10 @@
 close all; clear all;
-run('../vlfeat-0.9.20/toolbox/vl_setup');
+run('../vlfeat-0.9.21/toolbox/vl_setup');
 
 addpath('transforms');
 addpath('examples');
 
-test;
+% test;
 % REW_worktable;
 % REW_racetracks;
 % REW_racetracks;
@@ -66,7 +66,7 @@ test;
 % NISwGSP_cise;
 % NISwGSP_denny;
 % NISwGSP_grail;
-% NISwGSP_Memorial_Hall;
+NISwGSP_Memorial_Hall;
 % NISwGSP_parrington;
 
 % CAVE_atrium;

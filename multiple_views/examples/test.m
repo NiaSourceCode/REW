@@ -2,24 +2,25 @@
 % %{
 % imfolder = 'images/test';
 % imfolder = 'images/fcase_foundation';
-imfolder = '../../database/GSP_1';
-im_n = 2;
+imfolder = '/home/lynx/study/stitch/dataset/z_distortion';
+im_n = 2; % 图片数
 imfile = cell(im_n,1);
-% imfile{1} = [imfolder '\' '01.png'];
-% imfile{2} = [imfolder '\' '02.png'];
-% imfile{1} = [imfolder '\' 'Maneki-neko_01.jpg']
-% imfile{2} = [imfolder '\' 'Maneki-neko_02.jpg']
-imfile{1} = [imfolder '\' '01.jpg']
-imfile{2} = [imfolder '\' '02.jpg']
-% imfile{1} = [imfolder '\' 'foundation_01.JPG']
-% imfile{2} = [imfolder '\' 'foundation_02.JPG']
+
+imfile{1} = [imfolder '/' '1.jpg']
+imfile{2} = [imfolder '/' '2.jpg']
+imfile{3} = [imfolder '/' '3.jpg']
+imfile{4} = [imfolder '/' '4.jpg']
+imfile{5} = [imfolder '/' '5.jpg']
+imfile{6} = [imfolder '/' '6.jpg']
+imfile{7} = [imfolder '/' '7.jpg']
+imfile{8} = [imfolder '/' '8.jpg']
 
 im = cell(im_n,1);
 for ii = 1:im_n
     im{ii} = imread(imfile{ii});
 end
 
-edge_list = [1,2];
+edge_list = [1,2; 2:3; 3,4; 4,5; 5,6; 6,7; 7,8];
 
 imsize = zeros(im_n,3);
 
@@ -33,5 +34,9 @@ for ii = 1:im_n
     end
 end
 
-mosaic = REW_mosaic( im, edge_list, 1, 'persp', 0, imfolder );
+mosaic = REW_mosaic( im, edge_list, 2, 'persp', 0, imfolder );
+% parm2: edge_list, 可以为[]
+% parm3: ref图片的index, 如果为0则没有参考图像, 倾向于全局
+% parm4: 'persp'(正常) 或 'equi'(球面透视)
+% parm5: ransac的阈值
 %}
