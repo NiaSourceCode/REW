@@ -3,7 +3,7 @@
 % imfolder = 'images/test';
 % imfolder = 'images/fcase_foundation';
 imfolder = '/home/lynx/study/stitch/dataset/z_distortion';
-im_n = 2; % 图片数
+im_n = 8; % 图片数
 imfile = cell(im_n,1);
 
 imfile{1} = [imfolder '/' '1.jpg']
@@ -34,7 +34,7 @@ for ii = 1:im_n
     end
 end
 
-mosaic = REW_mosaic( im, edge_list, 2, 'persp', 0, imfolder );
+mosaic = REW_mosaic( im, edge_list, 0, 'persp', 0, imfolder );
 % parm2: edge_list, 可以为[]
 % parm3: ref图片的index, 如果为0则没有参考图像, 倾向于全局
 % parm4: 'persp'(正常) 或 'equi'(球面透视)
