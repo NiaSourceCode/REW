@@ -6,9 +6,9 @@ function [ mosaic ] = REW_mosaic( im, edge_list, refi, projection_type, ransac_t
 %   projection_type: the projection type of the mosaic, 
 %                    'persp' (default) for perspective projection 
 %                    and 'equi' for equirectangular projection.
-%   ransac_threshold�� threshold of global ransac
+%   ransac_threshold: threshold of global ransac
 %                     0 for default value which is set to 0.1;
-%   imfolder�� The folder containing the input images,
+%   imfolder: The folder containing the input images,
 %              and saving the resulted mosaic, if needed.
 
 
@@ -32,12 +32,12 @@ if ~strcmp(projection_type,'persp') && ~strcmp(projection_type,'equi')
     error('Unsupported projection type!');
 end
 
-save_results = true;
+save_results = false; %% 是否自动保存
 recomp_global_paras = false;
 compute_global_results = true;
 show_intermediate_results = false;
 blend_output = true;
-bgcolor = 1; % 0 for black, 1 for white
+bgcolor = 0; % 0 for black, 1 for white
 
 im_n = size(im, 1);
 edge_n = size(edge_list, 1);
@@ -627,13 +627,13 @@ if blend_output
         mask_save = zeros(mosaich,mosaicw);
         mask_save(m_v0_(i):m_v1_(i),m_u0_(i):m_u1_(i)) = mask{i}(:,:,1);
         
-        imp_path = sprintf('%s\\p_%02d.png', imfolder, i);
+        imp_path = sprintf('%s/p_%02d.png', imfolder, i);
         imwrite(im_p_save, imp_path, 'png', 'Alpha', mask_save) ;
     end
-    if bgcolor == 0
-        sysorder = sprintf('enblend --output=%s\\mosaic_blend.jpg', imfolder) ;
+    if bgcolor == 100 %% 原为黑色背景
+        sysorder = sprintf('/home/lynx/study/stitch/enblend/build/bin/enblend --output=%s/mosaic_blend.jpg', imfolder); %% jpg 背景为黑
     else
-        sysorder = sprintf('enblend --output=%s\\mosaic_blend.png', imfolder) ;
+        sysorder = sprintf('/home/lynx/study/stitch/enblend/build/bin/enblend --output=%s/mosaic_blend.png', imfolder);
     end
     if strcmp(projection_type,'equi')
         if abs(mosaicw / fe - pi) < 0.2
@@ -641,13 +641,13 @@ if blend_output
         end
     end
     for i = 1:im_n
-        sysorder = sprintf('%s %s\\p_%02d.png',sysorder, imfolder, i) ;
+        sysorder = sprintf('%s %s/p_%02d.png',sysorder, imfolder, i) ;
     end
     sysorder = sprintf('%s --gpu', sysorder) ;
-    system(sysorder) ;
+    system(['export LD_LIBRARY_PATH=/home/lynx/fuck_mount/ffmpeg/install_dir/lib;' sysorder], '-echo') ;
     
     for i = 1:im_n
-        imp_path = sprintf('%s\\p_%02d.png', imfolder, i);
+        imp_path = sprintf('%s/p_%02d.png', imfolder, i);
         delete(imp_path);
     end
 end
