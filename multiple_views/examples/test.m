@@ -2,14 +2,14 @@
 % %{
 % imfolder = 'images/test';
 % imfolder = 'images/fcase_foundation';
-imfolder = '/home/lynx/fuck_mount/opencv/workspace/test_result/paper/2';
-im_n = 4; % 图片数
+imfolder = '/home/lynx/fuck_mount/opencv/workspace/test_result/paper/29';
+im_n = 3; % 图片数
 imfile = cell(im_n,1);
 
 imfile{1} = [imfolder '/' '1.jpg']
 imfile{2} = [imfolder '/' '2.jpg']
 imfile{3} = [imfolder '/' '3.jpg']
-imfile{4} = [imfolder '/' '4.jpg']
+% imfile{4} = [imfolder '/' '4.jpg']
 % imfile{5} = [imfolder '/' '5.jpg']
 % imfile{6} = [imfolder '/' '6.jpg']
 % imfile{7} = [imfolder '/' '7.jpg']
@@ -23,7 +23,7 @@ end
 edge_list = [
     1,2;
     2,3;
-    3,4;
+    % 3,4;
 ];
 
 imsize = zeros(im_n,3);
