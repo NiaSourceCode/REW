@@ -162,7 +162,8 @@ else
             paras_init = paras;
         end
     end
-    save([imfolder,'\global_paras.mat'],'paras');
+    % 不要保存历史结果
+    % save([imfolder,'\global_paras.mat'],'paras');
 end
 
 M = cell(im_n,1);
@@ -179,6 +180,7 @@ for i = 1 : im_n
     R_pair{i, i} = eye(3);
 end
 for i = 2:im_n
+    fprintf("%d %d\n", im_n+3*(i-2)+1, im_n+3*(i-2)+3);
     theta = paras(im_n+3*(i-2)+1:im_n+3*(i-2)+3);
     theta_m = [0         -theta(3) theta(2)
                theta(3)  0         -theta(1)
