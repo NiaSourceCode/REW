@@ -351,20 +351,21 @@ end
 warped_points_x = cell(im_n, 1);
 warped_points_y = cell(im_n, 1);
 for i = 1 : im_n
-    figure(20 + i * 2 + 1); clf;
-    imshow(im_p{i}, 'border', 'tight'); hold on;
-    plot(ubox_{i}(1,:) - u_shift(i), vbox_{i}(1,:) - v_shift(i), 'b.', 'MarkerSize', 15);
-    impixelinfo;
+    % 图像形变后轮廓
+    % figure(20 + i * 2 + 1); clf;
+    % imshow(im_p{i}, 'border', 'tight'); hold on;
+    % plot(ubox_{i}(1,:) - u_shift(i), vbox_{i}(1,:) - v_shift(i), 'b.', 'MarkerSize', 15);
+    % impixelinfo;
     % 原图特征点
     % figure(10 + i * 2);
     % imshow(im{i}, 'border', 'tight'); hold on;
     % plot(points{i}(1,:), points{i}(2,:), 'b.', 'MarkerSize', 15);
     % 形变后特征点
     % [warped_points_x{i}, warped_points_y{i}] = trans_persp2persp(points{i}(1,:), points{i}(2,:), R{i}, Mp, Dp, M{i}, D{i});
-    % [warped_points_x{i}, warped_points_y{i}] = trans_persp2persp(points{i}(1,:), points{i}(2,:), R{i}', M{i}, D{i}, Mp, Dp);
-    % figure(10 + i * 2 + 1); clf;
-    % imshow(im_p{i}, 'border', 'tight'); hold on;
-    % plot(warped_points_x{i}(1,:), warped_points_y{i}(1,:), 'b.', 'MarkerSize', 15);
+    [warped_points_x{i}, warped_points_y{i}] = trans_persp2persp(points{i}(1,:), points{i}(2,:), R{i}', M{i}, D{i}, Mp, Dp);
+    figure(10 + i * 2 + 1); clf;
+    imshow(im_p{i}, 'border', 'tight'); hold on;
+    plot(warped_points_x{i}(1,:) - u_shift(i), warped_points_y{i}(1,:) - v_shift(i), 'b.', 'MarkerSize', 15);
 end
 
 %% local mosaic 有些情况会出界
