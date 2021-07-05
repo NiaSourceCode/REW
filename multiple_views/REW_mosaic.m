@@ -255,15 +255,12 @@ for i = 1 : im_n
         [ubox_{i}, vbox_{i}] =  trans_persp2persp(ubox{i}, vbox{i}, R{i}', M{i}, D{i}, Mp, Dp);
     end
 
-    % 调整偏移: 删掉
-    % u_min = min(ubox_{i});
-    % v_min = min(vbox_{i});
-    % ubox_{i} = ubox_{i} - u_min;
-    % vbox_{i} = vbox_{i} - v_min;
-
+    % 串联数组
     ubox_all_ = cat(2,ubox_all_,ubox_{i});
     vbox_all_ = cat(2,vbox_all_,vbox_{i});
 end
+
+% 计算最终图像尺寸
 u0 = min(ubox_all_);
 u1 = max(ubox_all_);
 ur = u0:u1;
@@ -272,6 +269,10 @@ v1 = max(vbox_all_);
 vr = v0:v1;
 mosaicw = size(ur, 2);
 mosaich = size(vr, 2);
+
+% debug: 记录偏移, 计算SSIM需要用到
+u_shift = zeros(im_n:1);
+v_shift = zeros(im_n:1);
 
 m_u0_ = zeros(im_n,1);
 m_u1_ = zeros(im_n,1);
@@ -292,6 +293,8 @@ for i = 1 : im_n
     m_v1_(i) = floor(v1_im_ - v0 + 1);
     imw_(i) = floor(m_u1_(i) - m_u0_(i) + 1);
     imh_(i) = floor(m_v1_(i) - m_v0_(i) + 1);
+    u_shift(i) = u0_im_;
+    v_shift(i) = v0_im_;
 end
 
 %% global mosaic
@@ -350,9 +353,8 @@ warped_points_y = cell(im_n, 1);
 for i = 1 : im_n
     figure(20 + i * 2 + 1); clf;
     imshow(im_p{i}, 'border', 'tight'); hold on;
-    plot(ubox_{i}(1,:) - ubox_{1}(1,1), vbox_{i}(1,:) - vbox_{1}(1,1), 'b.', 'MarkerSize', 1);
-    fprintf("%f\n", ubox_{i}(1,1), vbox_{i}(1,1));
-    fprintf("%d\n", size(im_p{i}));
+    plot(ubox_{i}(1,:) - u_shift(i), vbox_{i}(1,:) - v_shift(i), 'b.', 'MarkerSize', 15);
+    impixelinfo;
     % 原图特征点
     % figure(10 + i * 2);
     % imshow(im{i}, 'border', 'tight'); hold on;
