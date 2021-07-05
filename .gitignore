@@ -1,3 +1,5 @@
 multiple_views/images/*
 two_views/images/*
 vlfeat-*
+*.png
+*.jpg
