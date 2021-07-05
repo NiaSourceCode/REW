@@ -361,11 +361,47 @@ for i = 1 : im_n
     % imshow(im{i}, 'border', 'tight'); hold on;
     % plot(points{i}(1,:), points{i}(2,:), 'b.', 'MarkerSize', 15);
     % 形变后特征点
-    % [warped_points_x{i}, warped_points_y{i}] = trans_persp2persp(points{i}(1,:), points{i}(2,:), R{i}, Mp, Dp, M{i}, D{i});
     [warped_points_x{i}, warped_points_y{i}] = trans_persp2persp(points{i}(1,:), points{i}(2,:), R{i}', M{i}, D{i}, Mp, Dp);
-    figure(10 + i * 2 + 1); clf;
-    imshow(im_p{i}, 'border', 'tight'); hold on;
-    plot(warped_points_x{i}(1,:) - u_shift(i), warped_points_y{i}(1,:) - v_shift(i), 'b.', 'MarkerSize', 15);
+    % figure(10 + i * 2 + 1); clf;
+    % imshow(im_p{i}, 'border', 'tight'); hold on;
+    % plot(warped_points_x{i}(1,:) - u_shift(i), warped_points_y{i}(1,:) - v_shift(i), 'b.', 'MarkerSize', 5);
+
+    % 对每个特征点位置进行计算
+    ssim_sum = 0;
+    psnr_sum = 0;
+    valid_count = 0;
+    for j = 1 : length(warped_points_x{i})
+        old_x = points{i}(1,j);
+        old_y = points{i}(2,j);
+        new_x = warped_points_x{i}(j) - u_shift(i);
+        new_y = warped_points_y{i}(j) - v_shift(i);
+        % figure(29 + j*2); clf;
+        % imshow(im{i}, 'border', 'tight'); hold on;
+        % plot(old_x, old_y, 'b.', 'MarkerSize', 15);
+        % figure(29 + j*2 + 1); clf;
+        % imshow(im_p{i}, 'border', 'tight'); hold on;
+        % plot(new_x, new_y, 'b.', 'MarkerSize', 15);
+        % break;
+        % 两张图的类型需要相同
+        old_image = im2double(imcrop(im{i}, [old_x - 10, old_y - 10, 21, 21]));
+        new_image = im2double(imcrop(im_p{i}, [new_x - 10, new_y - 10, 21, 21]));
+        old_r = size(old_image, 1);
+        old_c = size(old_image, 2);
+        new_r = size(new_image, 1);
+        new_c = size(new_image, 2);
+        if (old_r ~= new_r) || (old_c ~= new_c)
+            % fprintf("%d %d %d %d\n", old_r, new_r, old_c, new_c);
+            continue;
+        end
+        ssimval = ssim(old_image, new_image);
+        snr = psnr(old_image, new_image);
+        ssim_sum = ssim_sum + ssimval;
+        psnr_sum = psnr_sum + snr;
+        valid_count = valid_count + 1;
+    end
+    disp(valid_count);
+    disp(ssim_sum / valid_count);
+    disp(psnr_sum / valid_count);
 end
 
 %% local mosaic 有些情况会出界

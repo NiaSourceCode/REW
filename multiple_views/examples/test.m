@@ -4,7 +4,7 @@
 % imfolder = 'images/fcase_foundation';
 % imfolder = '/home/lynx/study/stitch/dataset/z_test';
 % imfolder = '/home/lynx/fuck_mount/opencv/workspace/test_result/paper/16';
-imfolder = '/home/lynx/fuck_mount/opencv/workspace/tests_new/3';
+imfolder = '/home/lynx/fuck_mount/opencv/workspace/tests_new/4';
 im_n = 2; % 图片数
 imfile = cell(im_n,1);
 
