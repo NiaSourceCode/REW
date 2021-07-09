@@ -4,15 +4,15 @@
 % imfolder = 'images/fcase_foundation';
 % imfolder = '/home/lynx/study/stitch/dataset/z_test';
 % imfolder = '/home/lynx/fuck_mount/opencv/workspace/test_result/paper/16';
-imfolder = '/home/lynx/fuck_mount/opencv/workspace/tests_new/4';
-im_n = 2; % 图片数
+imfolder = '/home/lynx/fuck_mount/opencv/workspace/tests_new/3';
+im_n = 5; % 图片数
 imfile = cell(im_n,1);
 
 imfile{1} = [imfolder '/' '1.jpg']
 imfile{2} = [imfolder '/' '2.jpg']
-% imfile{3} = [imfolder '/' '3.jpg']
-% imfile{4} = [imfolder '/' '4.jpg']
-% imfile{5} = [imfolder '/' '5.jpg']
+imfile{3} = [imfolder '/' '3.jpg']
+imfile{4} = [imfolder '/' '4.jpg']
+imfile{5} = [imfolder '/' '5.jpg']
 % imfile{6} = [imfolder '/' '6.jpg']
 % imfile{7} = [imfolder '/' '7.jpg']
 % imfile{8} = [imfolder '/' '8.jpg']
@@ -24,9 +24,9 @@ end
 
 edge_list = [
     1,2;
-    % 2,3;
-    % 3,4;
-    % 4,5;
+    2,3;
+    3,4;
+    4,5;
     % 5,6;
     % 6,7;
     % 7,8;
@@ -36,8 +36,9 @@ imsize = zeros(im_n, 3);
 
 for ii = 1:im_n
     imsize(ii,:) = size(im{ii});
-    if imsize(ii,1) > 720
-        scale = 720/size(im{ii}, 1);
+    % 宽不超过 720
+    if imsize(ii,1) > 800
+        scale = 800/size(im{ii}, 1);
         im{ii} = imresize(im{ii}, scale);
 
         imsize(ii,:) = size(im{ii});

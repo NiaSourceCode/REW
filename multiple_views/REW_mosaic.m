@@ -274,6 +274,7 @@ mosaich = size(vr, 2);
 u_shift = zeros(im_n:1);
 v_shift = zeros(im_n:1);
 
+% 每张图片在最终结果中的Rect区域
 m_u0_ = zeros(im_n,1);
 m_u1_ = zeros(im_n,1);
 m_v0_ = zeros(im_n,1);
@@ -338,7 +339,7 @@ if compute_global_results
     mosaic = mosaic ./ mass;
     mosaic(isnan(mosaic)) = bgcolor;
     
-    figure(2) ;
+    figure(2);
     imshow(mosaic, 'border', 'tight') ;
     drawnow;
     if save_results
@@ -348,61 +349,131 @@ end
 
 %% 拼接质量评估
 
-warped_points_x = cell(im_n, 1);
-warped_points_y = cell(im_n, 1);
-for i = 1 : im_n
-    % 图像形变后轮廓
-    % figure(20 + i * 2 + 1); clf;
-    % imshow(im_p{i}, 'border', 'tight'); hold on;
-    % plot(ubox_{i}(1,:) - u_shift(i), vbox_{i}(1,:) - v_shift(i), 'b.', 'MarkerSize', 15);
-    % impixelinfo;
-    % 原图特征点
-    % figure(10 + i * 2);
-    % imshow(im{i}, 'border', 'tight'); hold on;
-    % plot(points{i}(1,:), points{i}(2,:), 'b.', 'MarkerSize', 15);
-    % 形变后特征点
-    [warped_points_x{i}, warped_points_y{i}] = trans_persp2persp(points{i}(1,:), points{i}(2,:), R{i}', M{i}, D{i}, Mp, Dp);
-    % figure(10 + i * 2 + 1); clf;
-    % imshow(im_p{i}, 'border', 'tight'); hold on;
-    % plot(warped_points_x{i}(1,:) - u_shift(i), warped_points_y{i}(1,:) - v_shift(i), 'b.', 'MarkerSize', 5);
+% warped_points_x = cell(im_n, 1);
+% warped_points_y = cell(im_n, 1);
+% for i = 1 : im_n
+%     % 图像形变后轮廓
+%     % figure(20 + i * 2 + 1); clf;
+%     % imshow(im_p{i}, 'border', 'tight'); hold on;
+%     % plot(ubox_{i}(1,:) - u_shift(i), vbox_{i}(1,:) - v_shift(i), 'b.', 'MarkerSize', 15);
+%     % impixelinfo;
+%     % 原图特征点
+%     % figure(10 + i * 2);
+%     % imshow(im{i}, 'border', 'tight'); hold on;
+%     % plot(points{i}(1,:), points{i}(2,:), 'b.', 'MarkerSize', 15);
+%     % 形变后特征点
+%     [warped_points_x{i}, warped_points_y{i}] = trans_persp2persp(points{i}(1,:), points{i}(2,:), R{i}', M{i}, D{i}, Mp, Dp);
+%     % figure(10 + i * 2 + 1); clf;
+%     % imshow(im_p{i}, 'border', 'tight'); hold on;
+%     % plot(warped_points_x{i}(1,:) - u_shift(i), warped_points_y{i}(1,:) - v_shift(i), 'b.', 'MarkerSize', 5);
 
-    % 对每个特征点位置进行计算
-    ssim_sum = 0;
-    psnr_sum = 0;
-    valid_count = 0;
-    for j = 1 : length(warped_points_x{i})
-        old_x = points{i}(1,j);
-        old_y = points{i}(2,j);
-        new_x = warped_points_x{i}(j) - u_shift(i);
-        new_y = warped_points_y{i}(j) - v_shift(i);
-        % figure(29 + j*2); clf;
-        % imshow(im{i}, 'border', 'tight'); hold on;
-        % plot(old_x, old_y, 'b.', 'MarkerSize', 15);
-        % figure(29 + j*2 + 1); clf;
-        % imshow(im_p{i}, 'border', 'tight'); hold on;
-        % plot(new_x, new_y, 'b.', 'MarkerSize', 15);
-        % break;
-        % 两张图的类型需要相同
-        old_image = im2double(imcrop(im{i}, [old_x - 10, old_y - 10, 21, 21]));
-        new_image = im2double(imcrop(im_p{i}, [new_x - 10, new_y - 10, 21, 21]));
-        old_r = size(old_image, 1);
-        old_c = size(old_image, 2);
-        new_r = size(new_image, 1);
-        new_c = size(new_image, 2);
-        if (old_r ~= new_r) || (old_c ~= new_c)
-            % fprintf("%d %d %d %d\n", old_r, new_r, old_c, new_c);
-            continue;
-        end
-        ssimval = ssim(old_image, new_image);
-        snr = psnr(old_image, new_image);
-        ssim_sum = ssim_sum + ssimval;
-        psnr_sum = psnr_sum + snr;
-        valid_count = valid_count + 1;
-    end
-    disp(valid_count);
-    disp(ssim_sum / valid_count);
-    disp(psnr_sum / valid_count);
+%     % 对每个特征点位置进行计算
+%     ssim_sum = 0;
+%     psnr_sum = 0;
+%     valid_count = 0;
+%     for j = 1 : length(warped_points_x{i})
+%         old_x = points{i}(1,j);
+%         old_y = points{i}(2,j);
+%         new_x = warped_points_x{i}(j) - u_shift(i);
+%         new_y = warped_points_y{i}(j) - v_shift(i);
+%         % figure(29 + j*2); clf;
+%         % imshow(im{i}, 'border', 'tight'); hold on;
+%         % plot(old_x, old_y, 'b.', 'MarkerSize', 15);
+%         % figure(29 + j*2 + 1); clf;
+%         % imshow(im_p{i}, 'border', 'tight'); hold on;
+%         % plot(new_x, new_y, 'b.', 'MarkerSize', 15);
+%         % break;
+%         % 两张图的类型需要相同
+%         old_image = im2double(imcrop(im{i}, [old_x - 10, old_y - 10, 21, 21]));
+%         new_image = im2double(imcrop(im_p{i}, [new_x - 10, new_y - 10, 21, 21]));
+%         old_r = size(old_image, 1);
+%         old_c = size(old_image, 2);
+%         new_r = size(new_image, 1);
+%         new_c = size(new_image, 2);
+%         if (old_r ~= new_r) || (old_c ~= new_c)
+%             % fprintf("%d %d %d %d\n", old_r, new_r, old_c, new_c);
+%             continue;
+%         end
+%         ssimval = ssim(old_image, new_image);
+%         snr = psnr(old_image, new_image);
+%         ssim_sum = ssim_sum + ssimval;
+%         psnr_sum = psnr_sum + snr;
+%         valid_count = valid_count + 1;
+%     end
+
+%     % 打印结果
+%     disp(valid_count);
+%     disp(ssim_sum / valid_count);
+%     disp(psnr_sum / valid_count);
+% end
+
+%% 直线保持评估
+
+% 注意图像的尺寸一定要是800 * 600
+% disp(size(im{1}));
+% added = im_p{1}
+for i = 1 : im_n
+    disp(size(im_p{i}));
+    % added = imadd(added, im_p{i})
 end
+figure(114); clf;
+imshow(mosaic, 'border', 'tight'); hold on;
+impixelinfo;% 显示坐标
+% imshow(added, 'border', 'tight');
+% 读取网格点信息
+lines = load('/home/lynx/fuck_mount/opencv/workspace/collineared_lines.txt');
+% 用于保存两个端点
+A = -1;
+B = -1;
+C = -1;
+line_idx = 1;
+line_err = 0;
+valid_count = 0;
+while line_idx <= length(lines)
+    img_idx = lines(line_idx, 1) + 1;% -1 + 1 = 0
+    vtx_x   = lines(line_idx, 3);
+    vtx_y   = lines(line_idx, 4);
+    % 新的一组共线线段
+    if (img_idx == 0)
+        % 获取端点数据
+        img_1 = lines(line_idx + 1, 1) + 1;
+        x_1   = lines(line_idx + 1, 3);
+        y_1   = lines(line_idx + 1, 4);
+        img_2 = lines(line_idx + 2, 1) + 1;
+        x_2   = lines(line_idx + 2, 3);
+        y_2   = lines(line_idx + 2, 4);
+        [ep1_x, ep1_y] = trans_persp2persp(x_1, y_1, R{img_1}', M{img_1}, D{img_1}, Mp, Dp);
+        [ep2_x, ep2_y] = trans_persp2persp(x_2, y_2, R{img_2}', M{img_2}, D{img_2}, Mp, Dp);
+        % 增加在拼接结果中的偏移
+        ep1_x = ep1_x + m_u0_(img_1);
+        ep1_y = ep1_y + m_v0_(img_1);
+        ep2_x = ep2_x + m_u0_(img_2);
+        ep2_y = ep2_y + m_v0_(img_2);
+        % 计算直线方程
+        A = ep2_y - ep1_y;
+        B = ep1_x - ep2_x;
+        C = ep2_x * ep1_y - ep1_x * ep2_y;
+        % fprintf("%f %f %f %f\n", ep1_x, ep1_y, ep2_x, ep2_y);
+        % line([ep1_x ; ep1_y], [ep2_x ; ep2_y], 'LineWidth', 5);
+        line_idx = line_idx + 3;
+    else
+        % 计算形变后网格点的位置
+        [warped_vtx_x, warped_vtx_y] = trans_persp2persp(vtx_x, vtx_y, R{img_idx}', M{img_idx}, D{img_idx}, Mp, Dp);
+        % 增加在拼接结果中的偏移
+        warped_vtx_x = warped_vtx_x + m_u0_(img_idx);
+        warped_vtx_y = warped_vtx_y + m_v0_(img_idx);
+        % plot(warped_vtx_x, warped_vtx_y, 'r.', 'MarkerSize', 5);
+        % 计算点到直线距离
+        line_dis = abs(A * warped_vtx_x + B * warped_vtx_y + C) / sqrt(A * A + B * B);
+        % 计算总误差
+        line_err = line_err + line_dis;
+        % 有效端点数
+        valid_count = valid_count + 1;
+        line_idx = line_idx + 1;
+    end
+end
+disp(valid_count);
+disp(line_err / valid_count);
 
 %% local mosaic 有些情况会出界
 
